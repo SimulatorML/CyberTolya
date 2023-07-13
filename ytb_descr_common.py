@@ -20,7 +20,7 @@ https://github.com/googleapis/google-cloud-python
 '''
 print('Hello,world!!!')
  
- 
+#тут должен быть api_key 
 API_KEY = ###
  
 '''
