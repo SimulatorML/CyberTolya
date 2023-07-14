@@ -1,5 +1,3 @@
-#AIzaSyBTv9_M_Dampia_3ODvD1D82lrxC8V9amg
-
 #JLu322-Dcow -видео от Бабушкина с канала KC
 #канал KC UCiZtj9HjyudBwC2TywG0GzQ
 
