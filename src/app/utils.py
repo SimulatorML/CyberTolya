@@ -46,13 +46,13 @@ def get_video_info(video_id: str = 'JLu322-Dcow'):
 
 def get_channel_videos_info(channel_id: str = 'UCiZtj9HjyudBwC2TywG0GzQ'):
     """
-    Get dataframe by videos of the channel in style link-description (then we put it in excel-file)
+    Get dataframe from channel in form link-title-description 
     """
     list_videos=[]
-    #We make a cycle because there is a limit by taking videos for one time
-    r=None
-    counter=4
+    #Cycle because it is maximum 50 for one time
+    counter=5
     for i in range(counter):
+        print(i)
         if r is not None:
             r = get_service().search().list(
             channelId=channel_id,
@@ -74,16 +74,18 @@ def get_channel_videos_info(channel_id: str = 'UCiZtj9HjyudBwC2TywG0GzQ'):
             # publishedAfter=datetime.datetime(2021, 1, 1, 0, 0, tzinfo=datetime.timezone.utc).isoformat(),
             # publishedBefore=datetime.datetime(2022, 1, 1, 0, 0, tzinfo=datetime.timezone.utc).isoformat()
             ).execute()
+        
         for item in r['items']:   
             list_videos.append(item['id']['videoId'])
-    
-    descr_list=dict()
+    #print('data prepare')
+    df=pd.DataFrame(columns=['link','title', 'Description'])
     for id in list_videos:
-        descr=get_video_info(id)
-        descr_list['https://youtu.be/'+str(id)]=descr
-    df_video=pd.DataFrame(descr_list.items(), columns=['link', 'Description'])
-
-    return df_video
+        descr,title=get_video_info(id)
+        #print(id)
+        link='https://youtu.be/'+str(id)
+        df_temp=pd.DataFrame([{'link':link,'title':title,'Description':descr}])
+        df = pd.concat([df, df_temp], ignore_index=True)
+    return df
 
 
 
