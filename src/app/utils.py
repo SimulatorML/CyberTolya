@@ -88,6 +88,7 @@ def get_channel_videos_info(channel_id: str = 'UCiZtj9HjyudBwC2TywG0GzQ'):
     return df
 
 def make_json(file_path: str) -> json:
+    #строка для получения links.json
     df = pd.read_excel(file_path, index_col=False)
     title = list(df['title'])
     link = list(df['link'])
