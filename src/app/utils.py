@@ -46,7 +46,7 @@ def get_video_info(video_id: str = 'JLu322-Dcow'):
 
 def get_channel_videos_info(channel_id: str = 'UCiZtj9HjyudBwC2TywG0GzQ'):
     """
-    Get dataframe from channel in form link-title-description 
+    Get dataframe from channel in form link-title-description
     """
     list_videos=[]
     #Cycle because it is maximum 50 for one time
