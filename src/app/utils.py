@@ -103,7 +103,10 @@ def preprocess_text(text: str) -> List:
     tokens = mystem.lemmatize(text.lower())
     tokens = [token for token in tokens if token not in rus_stopwords
               and token != " "
-              and token.strip() not in punctuation]
+              and token.strip() not in punctuation
+              and token != 'https'
+              and token != '://'
+              and not token.isdigit()]
     return tokens
 
 

@@ -3,22 +3,57 @@ import numpy as np
 import pandas as pd
 import pickle
 from typing import List
-
-from src.utils.preprocess import preprocess_text
+from pymystem3 import Mystem
+import nltk
+from nltk.corpus import stopwords
+from string import punctuation
+nltk.download('stopwords')
 
 import logging
+import os
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger('bm25_ranking')
 
 
-def train_model(corpus: List):
+mystem = Mystem()
+rus_stopwords = stopwords.words('russian')
+
+data_path_file="files/video_dataset.xlsx"
+
+model_path_desc = "src/model/bm25_result_desc.pkl"
+model_path_title = "src/model/bm25_result_title_test.pkl"
+
+def preprocess_text(text: str) -> List:
+    tokens = mystem.lemmatize(text.lower())
+    tokens = [token for token in tokens if token not in rus_stopwords
+              and token != " "
+              and token.strip() not in punctuation
+              and token != 'https'
+              and token != '://'
+              and not token.isdigit()]
+    return tokens
+
+
+def train_model(model_type: str,path_to_file=data_path_file):
     """
     Args:
         corpus (List): str
     """
+    df=pd.read_excel(path_to_file)
+    corpus = list(df[model_type]) 
+    preprocessed_corpus=[]
+    corpus=corpus[:10]
+    #i для контроля выполнения
+    i=0
+    for cor in corpus:
+        lemmas=preprocess_text(cor)
+        preprocessed_corpus.append(lemmas)
+        print('finished',i)
+        i=i+1
+    print("training finished")
     bm_25 = BM25Okapi(corpus)
-    with open('../src/model', 'wb') as bm25result_file:
+    with open(model_path_title, 'wb') as bm25result_file:
         pickle.dump(bm_25, bm25result_file)
 
 
@@ -32,5 +67,9 @@ def predict_with_trainde_model(message: str, path_to_model):
 
 
 if __name__ == "__main__":
-    df = pd.read_excel('../file/video_descr.xlsx')
-    links = df['link']
+    #обучение модели на датасете с описаниями/названиями видео (работает некоторое продолжительное время на ПК)
+    
+    train_model('title')
+    #train_model('description')
+
+       
