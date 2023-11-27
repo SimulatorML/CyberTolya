@@ -7,6 +7,7 @@ from rank_bm25 import BM25Okapi
 import numpy as np
 import pickle
 import json
+import random
 from typing import List
 from bs4 import BeautifulSoup
 
@@ -126,6 +127,9 @@ def predict_with_trained_model(message: str,
 
     scores_title = bm25_title.get_scores(message)
     index_title = list(map(str, np.argsort(scores_title)[-3:]))
+    #print('descr',scores_desc)
+    #print('title',scores_title)
+
 
     index = index_desc + index_title
 
@@ -133,14 +137,22 @@ def predict_with_trained_model(message: str,
     for ind in index:
         score.append((max(scores_desc[int(ind)], scores_title[int(ind)]), ind))
     score = sorted(list(set(score)), key=lambda tup: tup[0], reverse=True)[:3]
+    #print("score_itog",score)
+
+    #обрезаем где скор слишком маленький
+    score = [item for item in score if item[0] > 3]
+
 
     with open(path_to_links, "r") as read_file:
         links = json.load(read_file)
 
-    counter=1    
-    result = 'Вот что я нашел по данному запросу: \n'
+    counter=1
+    if len(score)>0:
+        result = 'Вот что я нашел по данному запросу: \n'
+    else:
+        score = [(random.uniform(1, 5), str(random.randint(1, 230))) for i in range(3)]
+        result = 'К сожалению, я ничего не нашел по твоему запросу и поэтому подберу тебе случайные видео.\nВозможно, они тебя заинтересуют. \n'
     for scr in score:
-        if scr[0] > 0:
-            result += f"{counter}. "+f'<a href="{links[scr[1]]["link"]}">{links[scr[1]]["title"]}</a>' + "\n"
-            counter=counter+1
+        result += f"{counter}. "+f'<a href="{links[scr[1]]["link"]}">{links[scr[1]]["title"]}</a>' + "\n"
+        counter=counter+1
     return result
