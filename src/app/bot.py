@@ -38,7 +38,7 @@ async def start_handler(message: types.Message):
 async def chat_answer(message: types.Message):
     """Test handler which duplicate every message like echo."""
     me = await bot.get_me()
-    trigger_word='\CyberTolya'
+    trigger_word='@Cyber_Tolya'
     #print(me.username)
     if message.chat.type == 'private':
         link = predict_with_trained_model(message.text)
