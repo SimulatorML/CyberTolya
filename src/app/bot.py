@@ -41,7 +41,7 @@ async def chat_answer(message: types.Message):
     trigger_word='@Cyber_Tolya'
     #print(me.username)
     if message.chat.type == 'private':
-        link = predict_with_trained_model(message.text)
+        link = await predict_with_trained_model(message.text)
         await message.answer(link, parse_mode=types.ParseMode.HTML)
         log.info('Bot has message in private')
         me = await bot.get_me()

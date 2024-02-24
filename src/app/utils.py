@@ -5,6 +5,7 @@ from nltk.corpus import stopwords
 from string import punctuation
 from rank_bm25 import BM25Okapi
 import numpy as np
+import asyncio
 import pickle
 import json
 import random
@@ -100,7 +101,7 @@ def make_json(file_path: str) -> json:
     with open(db_path, "w") as read_file:
         json.dump(json_dict, read_file)
 
-def preprocess_text(text: str) -> List:
+async def preprocess_text(text: str) -> List:
     tokens = mystem.lemmatize(text.lower())
     tokens = [token for token in tokens if token not in rus_stopwords
               and token != " "
@@ -111,7 +112,7 @@ def preprocess_text(text: str) -> List:
     return tokens
 
 
-def predict_with_trained_model(message: str,
+async def predict_with_trained_model(message: str,
                                path_to_model_desc=model_path_desc,
                                path_to_model_title=model_path_title,
                                path_to_links=db_path):
@@ -120,7 +121,7 @@ def predict_with_trained_model(message: str,
     with open(path_to_model_title, 'rb') as bm25result_file:
         bm25_title = pickle.load(bm25result_file)
 
-    message = preprocess_text(message)
+    message =await preprocess_text(message)
 
     scores_desc = bm25_desc.get_scores(message)
     index_desc = list(map(str, np.argsort(scores_desc)[-3:]))
